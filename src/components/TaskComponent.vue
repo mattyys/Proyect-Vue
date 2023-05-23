@@ -44,7 +44,7 @@ export default {
     data() {
         return {
             hola: "hola componente",
-            estado: true,
+            estado: false,
             hecho: true,
             numero: 1,
             nuevaTarea: '',
@@ -134,7 +134,7 @@ export default {
     border: solid 1px black;
     background: aquamarine;
     height: auto;
-    width: aut;
+    width: auto;
 }
 
 button {

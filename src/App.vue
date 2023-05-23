@@ -18,8 +18,9 @@ export default {
     // HelloWorld,
     //TaskComponent,
     //ClaseTres
-    ControlGastos
-  }
+    ControlGastos,
+    
+}
 }
 </script>
 

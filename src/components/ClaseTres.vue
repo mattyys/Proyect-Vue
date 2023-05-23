@@ -76,9 +76,6 @@ export default {
                 tarea: this.nuevaTarea,
                 estado: false,
             });
-        },
-        masIva: function () {
-            return this.carrito * 1.22
         }
     },
     computed: {
@@ -91,8 +88,10 @@ export default {
                 sumando = sumando + this.tareas[index].costo
             }
             return sumando
+        },
+        masIva: function () {
+            return this.carrito * 1.22
         }
-        
     },
 
     beforeCreate() {

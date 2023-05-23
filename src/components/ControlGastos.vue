@@ -1,80 +1,123 @@
 <template>
-    <h1>Control de Gastos</h1>
-    <section>
+    <main>
+        <h1>Stiema de Control de Gastos</h1>
+        <section id="section-info">
+            <div class="button-list-container">
+                <button class="info-button list" v-on:click="estado = true">Lista de Gastos</button>
+                <button class="info-button pay" v-on:click="estado = false">Pagadas</button>
+            </div>
+            <div class="ingreso-gastos-container">
 
-        <button v-on:click="estado = true">Lista de Gastos</button>
-        <button v-on:click="estado = false">Pagadas</button>
+                <input type="date" name="dateCosto" id="dateCosto" v-model="nuevaFecha">
+                <input type="text" placeholder="Ingrese Detalle" v-model="nuevoGasto">
+                <input type="number" placeholder="Importe" v-model="nuevoCosto">
+                <button class="primary add-button" v-on:click="addGasto">Agregar Gasto</button>
 
-        <div class="gastos-container" v-for="(gasto, index) in detallesGastos" :key="index">
-            
-            <div class="info-gastos" v-if="estado ? !gasto.pago : gasto.pago">
-                <h3>{{ gasto.detalle }} <span style="color: red;"> Costo: ${{ gasto.costo }}</span></h3>
-                <h3>mas IVA {{ itemMasIva(gasto.costo) }}</h3>
-                <button v-on:click="gasto.pago = true">Pagar</button>
             </div>
 
-        </div>
-        <div class="ingreso-gastos-container">
-            <input type="text" v-model="nuevoGasto">
-            <input type="number" v-model="nuevoCosto">
-            <button v-on:click="addGasto">Agregar Gasto</button>
-        </div>
+            <div class="gastos-container"  v-for="(gasto, index) in detallesGastos" :key="index">
 
-    </section>
+                <div class="info-gastos" v-if="estado ? !gasto.pago : gasto.pago">
+                    <h4>Fecha {{ gasto.fecha }} </h4>
+                    <h4>Detalle: {{ gasto.detalle }} </h4>
+                    <h4 style="color: red;"> Importe: ${{ gasto.costo }}</h4>
+                    <button class="primary pay-button" v-on:click="pagar(gasto)">{{ gasto.pago ? 'Deshacer' :
+                        'Pagar' }}</button>
+                </div>
+            </div>
+            <div>
+                <h3  class="resumen">Total: $ {{ totalCostosGastos }} </h3>
+            </div>
+
+
+        </section>
+    </main>
 </template>
 
 
 
 
 <script>
+
+
 export default {
     name: "ControlGastos",
     data() {
         return {
             title: "Control de Gastos",
             estado: true,//indica cuando es un nuevo gasto agregado en true
-            nuevoGasto: '',
-            nuevoCosto: 0,
-            iva:1.22,
+            nuevoGasto: '',//ingreso detalle del gasto
+            nuevoCosto: 0,//ingreso del importe del gasto
+            nuevaFecha: new Date().toISOString().substring(0, 10),//devuelve la fecha actual
+            conIva: false,
+            IVA: 1.22,
             contador: 1,
-            totListGasto: 0,
-            totListPagado: 0,
-            detallesGastos: [
-                {
-                    id: 0,
-                    detalle: 'Prueba',
-                    costo: 100,
-                    pago: false,
-                },
-              
+            detallesGastos: [ //coleccion de gastos
+                /*  {
+                      id: 0,
+                      detalle: 'Prueba',
+                      costo: 100,
+                      pago: false,
+                      fecha: datetime.now
+                      sumaIva:false
+                  },*/
+
             ]
         }
     },
 
     methods: {
-        addGasto: function () {
-            this.detallesGastos.push(
-                {
-                    id: this.detallesGastos.length ? this.detallesGastos.length : 0,
-                    detalle: this.nuevoGasto,
-                    costo: this.nuevoCosto,
-                    pago: false
-                }
-            )
+        addGasto: function () { //confirma que los campos no esten vacios y agrega a la coleccion
+            if (this.nuevoCosto === 0) {
+                return confirm("Ingrese un Importe");
+            } else if (this.nuevoGasto === '') {
+                confirm("Ingrese un detalle del gasto");
+            } else {
+                this.detallesGastos.push(
+                    {
+                        id: this.detallesGastos.length ? this.detallesGastos.length : 0,
+                        detalle: this.nuevoGasto.toUpperCase(),
+                        costo: this.nuevoCosto,
+                        pago: false,
+                        fecha: this.nuevaFecha,
+                        sumaIva: this.conIva
+                    }
+                )
+            }
         },
-        itemMasIva:function(costo){
-            return costo * this.iva;
+        itemMasIva: function (costo) {
+            return costo * this.IVA;
+        },
+        pagar: function (gasto) {//cambia el estado del pago o pendiente
+            if (gasto.pago) {
+                gasto.pago = false;
+            } else {
+                gasto.pago = true;
+            }
         }
     },
 
-    computed:{
-        totalAPagar:function(){
-            let suma = 0;
-            for (let i = 0; i < this.detallesGastos.length; i++){
-                suma += this.detallesGastos[i].costo;
+    computed: {
+        totalCostosGastos: function () {//realiza la suma de la lista de pagos o pendientes
+            let sumaP = 0;
+            let sumaG = 0;
+
+            for (let i = 0; i < this.detallesGastos.length; i++) {
+                if (this.detallesGastos[i].pago == false) {
+                    sumaG += this.detallesGastos[i].costo;
+                } else {
+                    sumaP += this.detallesGastos[i].costo;
+                }
             }
-            return suma;
+            if (this.estado) {
+                return sumaG;
+            } else {
+                return sumaP;
+            }
         }
+        
+
+
     }
 }
 </script>
@@ -83,18 +126,27 @@ export default {
 
 
 <style scoped>
+section {
+    margin: 35px;
+    border-width: 0.5px;
+    border-style: dashed;
+    border-radius: 30px 30px 0 0;
+}
+
 h1 {
     text-align: center;
 }
-h3{
+
+h3 {
     color: black;
 }
 
-button {
+
+.primary {
     height: 30px;
     padding-left: 24px;
     padding-right: 24px;
-    border-radius: 20px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 500;
     margin: 5px;
@@ -102,12 +154,30 @@ button {
     color: #FFFFFF;
 }
 
-button:hover {
+.info-button {
+    height: 30px;
+    padding: 0 24px 0;
+   
+
+}
+.list{
+    border-radius: 30px 0 0 0;
+    width: 50%;
+    background-color: rgb(118, 235, 190);
+}
+
+.pay {
+    border-radius: 0 30px 0 0;
+    width: 50%;
+    background-color: rgb(135, 171, 255);
+}
+
+.primary:hover {
     background-color: #735EAB;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.50);
 }
 
-button:active {
+.primary:active {
     transform: scale(0.98);
     box-shadow: none;
 }
@@ -119,10 +189,19 @@ button:active {
     height: auto;
     width: auto;
 }
-.info-gastos{
+
+.info-gastos {
     display: flex;
     align-items: center;
     justify-content: center;
     justify-content: space-evenly;
+}
+
+.ingreso-gastos-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-content: space-around;
+    border: solid 0.5px #494949;
 }
 </style>

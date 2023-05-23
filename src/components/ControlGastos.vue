@@ -8,9 +8,9 @@
             </div>
             <div class="ingreso-gastos-container">
 
-                <input type="date" name="dateCosto" id="dateCosto" v-model="nuevaFecha">
-                <input type="text" placeholder="Ingrese Detalle" v-model="nuevoGasto">
-                <input type="number" placeholder="Importe" v-model="nuevoCosto">
+                <input class="add-info-text" type="date" name="dateCosto" id="dateCosto" v-model="nuevaFecha">
+                <input class="add-info-text" type="text" placeholder="Ingrese Detalle" v-model="nuevoGasto">
+                <input class="add-info-text" type="number" placeholder="Importe" v-model="nuevoCosto">
                 <button class="primary add-button" v-on:click="addGasto">Agregar Gasto</button>
 
             </div>
@@ -138,7 +138,11 @@ h1 {
 }
 
 h3 {
-    color: black;
+    color: rgb(28, 27, 27);
+    font-size: x-large;
+    padding: 5px;
+    margin: auto;
+
 }
 
 
@@ -157,18 +161,21 @@ h3 {
 .info-button {
     height: 30px;
     padding: 0 24px 0;
-   
+    width: 50%;
+    color: rgb(41, 41, 41);
+    font-weight: 700;
+    font-size: large;
 
 }
 .list{
     border-radius: 30px 0 0 0;
-    width: 50%;
+   
     background-color: rgb(118, 235, 190);
 }
 
 .pay {
     border-radius: 0 30px 0 0;
-    width: 50%;
+   
     background-color: rgb(135, 171, 255);
 }
 
@@ -203,5 +210,17 @@ h3 {
     align-items: center;
     justify-content: space-around;
     border: solid 0.5px #494949;
+}
+.pay-button{
+    background-color: rgb(86, 91, 89);
+}
+.pay-button:hover{
+    background-color: #a7a6a6;
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.50);
+}
+.add-info-text{
+    width: 25%;
+    height: auto;
+    font-size: large;
 }
 </style>
